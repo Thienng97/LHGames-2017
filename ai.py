@@ -89,6 +89,8 @@ def bot():
 
     resPos = findNearestResource(deserialized_map, x, y)
     nextPos = goToPosition(resPos, Point(x,y), deserialized_map)
+    if nextPos == -1:
+        nextPos = Point(x,y)
 
     # return decision
     return create_move_action(nextPos)
