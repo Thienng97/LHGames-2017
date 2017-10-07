@@ -85,8 +85,29 @@ def bot():
 
             otherPlayers.append({player_name: player_info })
 
+    position = findNearestResource(deserialized_map, x, y)
+
+    print position
+
     # return decision
     return create_move_action(Point(0,1))
+
+def findNearestResource(dmap, x, y):
+    minDist = 20
+    resPos = -1;
+
+    for  i in range(0,20):
+        for j in range(0,20):
+            if dmap[i][j].Content == TileContent().Resource:
+                dist = math.sqrt(pow(dmap[i][j].X - x, 2) + pow(dmap[i][j].Y - y, 2))
+                if dist < minDist:
+                    minDist = dist;
+                    resPos = Point(dmap[i][j].X, dmap[i][j].Y)
+            elif dmap[i][j].Content == TileContent().Shop:
+                shopPosition = Point(dmap[i][j].X, dmap[i][j].Y)
+
+    return resPos
+
 
 @app.route("/", methods=["POST"])
 def reponse():
