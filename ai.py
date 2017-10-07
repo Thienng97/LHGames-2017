@@ -88,10 +88,6 @@ def bot():
 
             otherPlayers.append({player_name: player_info })
 
-    position = findNearestResource(deserialized_map, x, y)
-
-    print position
-
     # return decision
     return create_move_action(Point(0,1))
 
