@@ -31,7 +31,7 @@ def create_purchase_action(item):
 
 def deserialize_map(serialized_map):
     """
-    Fonction utilitaire pour comprendre la map
+    Fonction uti    litaire pour comprendre la map
     """
     serialized_map = serialized_map[1:]
     rows = serialized_map.split('[')
@@ -125,3 +125,24 @@ def checkMaxCapacity(player):
         return True
     elif player.CarriedRessources <= player.CarryingCapacity:
         return False
+
+def attackedByEnemy(player):
+    return 0;
+
+def checkEnvironnement(player, dmap):
+    possiblePosition = []
+    i = 0
+    goodTile = [TileContent().Resource, TileContent().Empty,TileContent().House]
+    if dmap[player.x-1][player.y].Content in [goodTile]:
+        possiblePosition[i] = dmap[player.x-1][player.y]
+        i = i + 1
+    if dmap[player.x + 1][player.y].Content in [goodTile]:
+        possiblePosition[i] = dmap[player.x + 1][player.y]
+        i = i + 1
+    if dmap[player.x][player.y - 1].Content in [goodTile]:
+        possiblePosition[i] = dmap[player.x][player.y-1]
+        i = i + 1
+    if dmap[player.x][player.y + 1].Content in [goodTile]:
+        possiblePosition[i] = dmap[player.x][player.y+1]
+
+    return possiblePosition
