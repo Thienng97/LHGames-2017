@@ -87,8 +87,11 @@ def bot():
                                      Point(p_pos["X"], p_pos["Y"]))
         otherPlayers.append(player_info)
 
+    resPos = findNearestResource(deserialized_map, x, y)
+    nextPos = goToPosition(resPos, Point(x,y), deserialized_map)
+
     # return decision
-    return create_move_action(Point(0,1))
+    return create_move_action(nextPos)
 
 def findNearestResource(dmap, x, y):
     global shopPosition
@@ -115,7 +118,7 @@ def goToPosition(dest, current, dmap):
     dy = dest.X - current.Y
     destPos = -1
 
-    validPos = checkEnvironnement(current, dmap)
+    validPos = checkEnvironnement(findInMap(current.X,current.Y, dmap), dmap)
 
     if doubleMove:
         destPos = Point(current.X + prevMove[0],current.Y + prevMove[1])
@@ -143,6 +146,34 @@ def goToPosition(dest, current, dmap):
 
     return destPos
 
+def findInMap(x,y,dmap):
+    for i in range(0,20):
+        for j in range(0,20):
+            if dmap[i][j].X == x and dmap[i][j].Y == y:
+                return Point(i,j)
+
+# checker si la capacite est full
+def checkMaxCapacity(player):
+    if player.CarriedRessources >= player.CarryingCapacity:
+        return True
+    elif player.CarriedRessources <= player.CarryingCapacity:
+        return False
+
+def checkEnvironnement(player, dmap):
+    possiblePosition = []
+
+    goodTile = [TileContent().Empty]
+
+    if dmap[player.X-1][player.Y].Content in goodTile and {player.X-1,player.Y} not in invalidPos:
+        possiblePosition.append({dmap[player.X-1][player.Y].X,dmap[player.X-1][player.Y].Y})
+    if dmap[player.X + 1][player.Y].Content in goodTile and {player.X + 1, player.Y} not in invalidPos:
+        possiblePosition.append({dmap[player.X + 1][player.Y].X, dmap[player.X + 1][player.Y].Y})
+    if dmap[player.X][player.Y - 1].Content in goodTile and {player.X, player.Y-1} not in invalidPos:
+        possiblePosition.append({dmap[player.X][player.Y - 1].X, dmap[player.X][player.Y - 1].Y-1})
+    if dmap[player.X][player.Y + 1].Content in goodTile and {player.X, player.Y+1} not in invalidPos:
+        possiblePosition.append({dmap[player.X][player.Y + 1].X, dmap[player.X][player.Y + 1].Y+1})
+
+    return possiblePosition
 
 @app.route("/", methods=["POST"])
 def reponse():
@@ -153,31 +184,3 @@ def reponse():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
-
-# checker si la capacite est full
-def checkMaxCapacity(player):
-    if player.CarriedRessources >= player.CarryingCapacity:
-        return True
-    elif player.CarriedRessources <= player.CarryingCapacity:
-        return False
-
-def attackedByEnemy(player):
-    return 0;
-
-def checkEnvironnement(player, dmap):
-    possiblePosition = []
-    i = 0
-    goodTile = [TileContent().Resource, TileContent().Empty,TileContent().House]
-    if dmap[player.x-1][player.y].Content in [goodTile] and {player.x-1,player.y} not in invalidPos:
-        possiblePosition[i] = {player.x-1,player.y}
-        i = i + 1
-    if dmap[player.x + 1][player.y].Content in [goodTile] and {player.x + 1, player.y} not in invalidPos:
-        possiblePosition[i] = {player.x + 1, player.y}
-        i = i + 1
-    if dmap[player.x][player.y - 1].Content in [goodTile] and {player.x, player.y-1} not in invalidPos:
-        possiblePosition[i] = {player.x, player.y-1}
-        i = i + 1
-    if dmap[player.x][player.y + 1].Content in [goodTile] and {player.x, player.y+1} not in invalidPos:
-        possiblePosition[i] = {player.x, player.y+1}
-
-    return possiblePosition
