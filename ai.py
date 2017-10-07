@@ -8,6 +8,7 @@ app = Flask(__name__)
 shopPosition = -1
 prevMove = {0, 0}
 doubleMove = False
+invalidPos = []
 
 def create_action(action_type, target):
     actionContent = ActionContent(action_type, target.__dict__)
@@ -114,6 +115,7 @@ def findNearestResource(dmap, x, y):
 def goToPosition(dest, current, dmap):
     global prevMove
     global doubleMove
+    global invalidPos
     dx = dest.X - current.X
     dy = dest.X - current.Y
     destPos = -1
@@ -122,6 +124,7 @@ def goToPosition(dest, current, dmap):
 
     if doubleMove:
         destPos = Point(current.X + prevMove[0],current.Y + prevMove[1])
+        invalidPos.append({current.X - prevMove[0],current.Y - prevMove[1]})
         doubleMove = False
     else:
         if len(validPos) <= 1:
@@ -170,16 +173,16 @@ def checkEnvironnement(player, dmap):
     possiblePosition = []
     i = 0
     goodTile = [TileContent().Resource, TileContent().Empty,TileContent().House]
-    if dmap[player.x-1][player.y].Content in [goodTile]:
+    if dmap[player.x-1][player.y].Content in [goodTile] and {player.x-1,player.y} not in invalidPos:
         possiblePosition[i] = {player.x-1,player.y}
         i = i + 1
-    if dmap[player.x + 1][player.y].Content in [goodTile]:
+    if dmap[player.x + 1][player.y].Content in [goodTile] and {player.x + 1, player.y} not in invalidPos:
         possiblePosition[i] = {player.x + 1, player.y}
         i = i + 1
-    if dmap[player.x][player.y - 1].Content in [goodTile]:
+    if dmap[player.x][player.y - 1].Content in [goodTile] and {player.x, player.y-1} not in invalidPos:
         possiblePosition[i] = {player.x, player.y-1}
         i = i + 1
-    if dmap[player.x][player.y + 1].Content in [goodTile]:
+    if dmap[player.x][player.y + 1].Content in [goodTile] and {player.x, player.y+1} not in invalidPos:
         possiblePosition[i] = {player.x, player.y+1}
 
     return possiblePosition
