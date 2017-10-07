@@ -32,6 +32,9 @@ def create_heal_action():
 def create_purchase_action(item):
     return create_action("PurchaseAction", item)
 
+def create_upgrade_action(upgrade):
+    return create_action("UpgradeAction", upgrade)
+
 def deserialize_map(serialized_map):
     """
     Fonction uti    litaire pour comprendre la map
@@ -97,7 +100,8 @@ def bot():
             action = create_move_action(homePos)
         else:
             action = create_move_action(nextPos)
-
+    elif p["TotalResources"] == 15000:
+        action = create_upgrade_action(UpgradeType().CarryingCapacity)
     else:
         resPos = findNearestResource(deserialized_map, x, y)
         nextPos = goToPosition(resPos, Point(x,y), deserialized_map)
