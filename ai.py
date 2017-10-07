@@ -136,7 +136,7 @@ def goToPosition(dest, current, dmap):
     global invalidPos
     dx = dest.X - current.X
     dy = dest.Y - current.Y
-    destPos = Point(0,0)
+    destPos = Point(current.X,current.Y)
 
     validPos = checkEnvironnement(findInMap(current.X,current.Y, dmap), dmap)
 
