@@ -95,3 +95,11 @@ def reponse():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+
+# checker si la capacite est full
+def checkMaxCapacity(player):
+    if player.CarriedRessources >= player.CarryingCapacity:
+        return True
+    elif player.CarriedRessources <= player.CarryingCapacity:
+        return False
+    
