@@ -87,31 +87,29 @@ def bot():
                                      Point(p_pos["X"], p_pos["Y"]))
         otherPlayers.append(player_info)
 
-    # print 'Player:'
-    # print player.Position
-    # for x in range(0,20):
-    #     for y in range(0,20):
-    #         if deserialized_map[y][x].Content == 1:
-    #             print 'O',  # wall
-    #         elif deserialized_map[y][x].Content == 0:
-    #             print '.',  # empty
-    #         elif deserialized_map[y][x].Content == 2:
-    #             print 'H',  # house
-    #         elif deserialized_map[y][x].Content == 3:
-    #             print '^',  # lava
-    #         elif deserialized_map[y][x].Content == 4:
-    #             print '$',  # resource
-    #         elif deserialized_map[y][x].Content == 5:
-    #             print 'S',  # shop
-    #         elif deserialized_map[y][x].Content == 6:
-    #             print '*',  # player
-    #     print '\n'
 
-    resPos = findNearestResource(deserialized_map, x, y)
-    nextPos = goToPosition(resPos, Point(x,y), deserialized_map)
+    if player.CarriedRessources == player.CarryingCapacity:
+        homePos = goToPosition(player.HouseLocation, Point(x,y), deserialized_map)
+        print homePos, player.HouseLocation
+        nextPos = goToPosition(homePos, Point(x,y), deserialized_map)
+
+        if math.sqrt(pow(homePos.X - nextPos.X, 2) + pow(homePos.Y - nextPos.Y, 2)) <= 1:
+            action = create_move_action(homePos)
+        else:
+            action = create_move_action(nextPos)
+
+    else:
+        resPos = findNearestResource(deserialized_map, x, y)
+        nextPos = goToPosition(resPos, Point(x,y), deserialized_map)
+
+        if math.sqrt(pow(resPos.X - nextPos.X, 2) + pow(resPos.Y - nextPos.Y, 2)) <= 1:
+            action = create_collect_action(resPos)
+        else:
+            action = create_move_action(nextPos)
 
     # return decision
-    return create_move_action(nextPos)
+    return action
+
 
 def findNearestResource(dmap, x, y):
     global shopPosition
@@ -136,7 +134,7 @@ def goToPosition(dest, current, dmap):
     global invalidPos
     dx = dest.X - current.X
     dy = dest.Y - current.Y
-    destPos = Point(0,0)
+    destPos = Point(current.X,current.Y)
 
     validPos = checkEnvironnement(findInMap(current.X,current.Y, dmap), dmap)
 
@@ -182,19 +180,19 @@ def checkMaxCapacity(player):
 def checkEnvironnement(player, dmap):
     possiblePosition = []
 
-    goodTile = [TileContent().Empty]
+    goodTile = [TileContent().Empty, TileContent().House]
 
-    if dmap[player.Y][player.X-1].Content in goodTile and (player.X-1,player.Y) not in invalidPos:
+    if dmap[player.Y][player.X - 1].Content in goodTile and (player.X-1,player.Y) not in invalidPos:
         possiblePosition.append((dmap[player.Y][player.X-1].X,dmap[player.Y][player.X-1].Y))
 
     if dmap[player.Y][player.X + 1].Content in goodTile and (player.X + 1, player.Y) not in invalidPos:
         possiblePosition.append((dmap[player.Y][player.X + 1].X,dmap[player.Y][player.X + 1].Y))
 
     if dmap[player.Y - 1][player.X].Content in goodTile and (player.X, player.Y-1) not in invalidPos:
-        possiblePosition.append((dmap[player.Y - 1][player.X].X,dmap[player.Y - 1][player.X].Y-1))
+        possiblePosition.append((dmap[player.Y - 1][player.X].X,dmap[player.Y - 1][player.X].Y))
 
     if dmap[player.Y + 1][player.X].Content in goodTile and (player.X, player.Y+1) not in invalidPos:
-        possiblePosition.append((dmap[player.Y + 1][player.X].X,dmap[player.Y + 1][player.X].Y+1))
+        possiblePosition.append((dmap[player.Y + 1][player.X].X,dmap[player.Y + 1][player.X].Y))
 
     return possiblePosition
 
@@ -206,4 +204,4 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
+    app.run(host="0.0.0.0", port=8080)
