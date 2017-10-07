@@ -109,8 +109,6 @@ def bot():
 
     resPos = findNearestResource(deserialized_map, x, y)
     nextPos = goToPosition(resPos, Point(x,y), deserialized_map)
-    if nextPos == -1:
-        nextPos = Point(x,y)
 
     # return decision
     return create_move_action(nextPos)
@@ -137,14 +135,14 @@ def goToPosition(dest, current, dmap):
     global doubleMove
     global invalidPos
     dx = dest.X - current.X
-    dy = dest.X - current.Y
-    destPos = -1
+    dy = dest.Y - current.Y
+    destPos = Point(0,0)
 
     validPos = checkEnvironnement(findInMap(current.X,current.Y, dmap), dmap)
-    print validPos
+
     if doubleMove:
         destPos = Point(current.X + prevMove[0],current.Y + prevMove[1])
-        invalidPos.append({current.X - prevMove[0],current.Y - prevMove[1]})
+        invalidPos.append((current.X - prevMove[0],current.Y - prevMove[1]))
         doubleMove = False
     else:
         if len(validPos) <= 1:
@@ -186,14 +184,17 @@ def checkEnvironnement(player, dmap):
 
     goodTile = [TileContent().Empty]
 
-    if dmap[player.X-1][player.Y].Content in goodTile and {player.X-1,player.Y} not in invalidPos:
-        possiblePosition.append((dmap[player.X - 1][player.Y].X,dmap[player.X - 1][player.Y].Y))
-    if dmap[player.X + 1][player.Y].Content in goodTile and {player.X + 1, player.Y} not in invalidPos:
-        possiblePosition.append((dmap[player.X + 1][player.Y].X,dmap[player.X + 1][player.Y].Y))
-    if dmap[player.X][player.Y - 1].Content in goodTile and {player.X, player.Y-1} not in invalidPos:
-        possiblePosition.append((dmap[player.X][player.Y - 1].X,dmap[player.X][player.Y - 1].Y-1))
-    if dmap[player.X][player.Y + 1].Content in goodTile and {player.X, player.Y+1} not in invalidPos:
-        possiblePosition.append((dmap[player.X][player.Y + 1].X,dmap[player.X][player.Y + 1].Y+1))
+    if dmap[player.Y][player.X-1].Content in goodTile and (player.X-1,player.Y) not in invalidPos:
+        possiblePosition.append((dmap[player.Y][player.X-1].X,dmap[player.Y][player.X-1].Y))
+
+    if dmap[player.Y][player.X + 1].Content in goodTile and (player.X + 1, player.Y) not in invalidPos:
+        possiblePosition.append((dmap[player.Y][player.X + 1].X,dmap[player.Y][player.X + 1].Y))
+
+    if dmap[player.Y - 1][player.X].Content in goodTile and (player.X, player.Y-1) not in invalidPos:
+        possiblePosition.append((dmap[player.Y - 1][player.X].X,dmap[player.Y - 1][player.X].Y-1))
+
+    if dmap[player.Y + 1][player.X].Content in goodTile and (player.X, player.Y+1) not in invalidPos:
+        possiblePosition.append((dmap[player.Y + 1][player.X].X,dmap[player.Y + 1][player.X].Y+1))
 
     return possiblePosition
 
