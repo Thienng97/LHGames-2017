@@ -86,3 +86,9 @@ class ActionContent(object):
     def __init__(self, action_name, content):
         self.ActionName = action_name
         self.Content = str(content)
+
+class ActionContent2(object):
+
+    def __init__(self, action_name, content):
+        self.ActionName = action_name
+        self.Content = content

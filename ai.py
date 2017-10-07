@@ -14,6 +14,7 @@ def create_action(action_type, target):
     actionContent = ActionContent(action_type, target.__dict__)
     return json.dumps(actionContent.__dict__)
 
+
 def create_move_action(target):
     return create_action("MoveAction", target)
 
@@ -33,7 +34,7 @@ def create_purchase_action(item):
     return create_action("PurchaseAction", item)
 
 def create_upgrade_action(upgrade):
-    return create_action("UpgradeAction", upgrade)
+    return json.dumps({"ActionName":"UpgradeAction","Content":upgrade})
 
 def deserialize_map(serialized_map):
     """
@@ -93,14 +94,13 @@ def bot():
 
     if player.CarriedRessources == player.CarryingCapacity:
         homePos = goToPosition(player.HouseLocation, Point(x,y), deserialized_map)
-        print homePos, player.HouseLocation
         nextPos = goToPosition(homePos, Point(x,y), deserialized_map)
 
         if math.sqrt(pow(homePos.X - nextPos.X, 2) + pow(homePos.Y - nextPos.Y, 2)) <= 1:
             action = create_move_action(homePos)
         else:
             action = create_move_action(nextPos)
-    elif p["TotalResources"] == 15000:
+    elif p["TotalResources"] >= 15000:
         action = create_upgrade_action(UpgradeType().CarryingCapacity)
     else:
         resPos = findNearestResource(deserialized_map, x, y)
@@ -208,4 +208,4 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=3000)
