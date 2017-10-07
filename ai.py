@@ -10,6 +10,9 @@ prevMove = {0, 0}
 doubleMove = False
 invalidPos = []
 
+capacitylvl = 0;
+speedlvl = 0;
+
 def create_action(action_type, target):
     actionContent = ActionContent(action_type, target.__dict__)
     return json.dumps(actionContent.__dict__)
@@ -58,6 +61,9 @@ def deserialize_map(serialized_map):
     return deserialized_map
 
 def bot():
+    global capacitylvl
+    global speedlvl
+
     """
     Main de votre bot.
     """
@@ -100,8 +106,12 @@ def bot():
             action = create_move_action(homePos)
         else:
             action = create_move_action(nextPos)
-    elif p["TotalResources"] >= 15000:
+    elif p["TotalResources"] >= 15000 and capacitylvl == 0:
         action = create_upgrade_action(UpgradeType().CarryingCapacity)
+        capacitylvl += 1
+    elif p["TotalResources"] >= 15000 and speedlvl == 0:
+        action = create_upgrade_action(UpgradeType().CollectingSpeed)
+        speedlvl += 1
     else:
         resPos = findNearestResource(deserialized_map, x, y)
         nextPos = goToPosition(resPos, Point(x,y), deserialized_map)
@@ -165,6 +175,15 @@ def goToPosition(dest, current, dmap):
             destPos = Point(current.X, current.Y - 1)
             prevMove = {0,-1}
             #check if can move down
+        elif (current.X + 1, current.Y) in validPos:
+            destPos = Point(current.X + 1, current.Y)
+            prevMove = {1,0}
+        elif (current.X - 1, current.Y) in validPos:
+            destPos = Point(current.X - 1, current.Y)
+            prevMove = {-1,0}
+        else:
+            destPos = Point(current.X + prevMove[0], current.Y + prevMove[1])
+            invalidPos.append((current.X - prevMove[0], current.Y - prevMove[1]))
 
     return destPos
 
@@ -208,4 +227,4 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
+    app.run(host="0.0.0.0", port=8080)
