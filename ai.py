@@ -6,6 +6,8 @@ import numpy
 app = Flask(__name__)
 
 shopPosition = -1
+prevMove = {0, 0}
+doubleMove = False
 
 def create_action(action_type, target):
     actionContent = ActionContent(action_type, target.__dict__)
@@ -93,20 +95,55 @@ def bot():
     return create_move_action(Point(0,1))
 
 def findNearestResource(dmap, x, y):
+    global shopPosition
     minDist = 20
-    resPos = -1;
+    resPos = -1
 
     for  i in range(0,20):
         for j in range(0,20):
             if dmap[i][j].Content == TileContent().Resource:
                 dist = math.sqrt(pow(dmap[i][j].X - x, 2) + pow(dmap[i][j].Y - y, 2))
                 if dist < minDist:
-                    minDist = dist;
+                    minDist = dist
                     resPos = Point(dmap[i][j].X, dmap[i][j].Y)
             elif dmap[i][j].Content == TileContent().Shop:
                 shopPosition = Point(dmap[i][j].X, dmap[i][j].Y)
 
     return resPos
+
+def goToPosition(dest, current, dmap):
+    global prevMove
+    global doubleMove
+    dx = dest.X - current.X
+    dy = dest.X - current.Y
+    destPos = -1
+
+    validPos = checkEnvironnement(current, dmap)
+
+    if doubleMove:
+        destPos = Point(current.X + prevMove[0],current.Y + prevMove[1])
+        doubleMove = False
+    else:
+        if len(validPos) <= 1:
+            doubleMove = True
+        if dx > 0 and {current.X + 1, current.Y} in validPos:
+            destPos = Point(current.X + 1, current.Y)
+            prevMove = {1,0}
+            #check if can move right
+        elif dx < 0 and {current.X - 1, current.Y} in validPos:
+            destPos = Point(current.X - 1, current.Y)
+            prevMove = {-1,0}
+            #check if can move left
+        elif dy > 0 and {current.X, current.Y + 1} in validPos:
+            destPos = Point(current.X, current.Y + 1)
+            prevMove = {0,1}
+            #check if can move up
+        elif dy < 0  and {current.X, current.Y - 1} in validPos:
+            destPos = Point(current.X, current.Y - 1)
+            prevMove = {0,-1}
+            #check if can move down
+
+    return destPos
 
 
 @app.route("/", methods=["POST"])
@@ -134,15 +171,15 @@ def checkEnvironnement(player, dmap):
     i = 0
     goodTile = [TileContent().Resource, TileContent().Empty,TileContent().House]
     if dmap[player.x-1][player.y].Content in [goodTile]:
-        possiblePosition[i] = dmap[player.x-1][player.y]
+        possiblePosition[i] = {player.x-1,player.y}
         i = i + 1
     if dmap[player.x + 1][player.y].Content in [goodTile]:
-        possiblePosition[i] = dmap[player.x + 1][player.y]
+        possiblePosition[i] = {player.x + 1, player.y}
         i = i + 1
     if dmap[player.x][player.y - 1].Content in [goodTile]:
-        possiblePosition[i] = dmap[player.x][player.y-1]
+        possiblePosition[i] = {player.x, player.y-1}
         i = i + 1
     if dmap[player.x][player.y + 1].Content in [goodTile]:
-        possiblePosition[i] = dmap[player.x][player.y+1]
+        possiblePosition[i] = {player.x, player.y+1}
 
     return possiblePosition
