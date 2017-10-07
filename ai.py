@@ -87,6 +87,26 @@ def bot():
                                      Point(p_pos["X"], p_pos["Y"]))
         otherPlayers.append(player_info)
 
+    # print 'Player:'
+    # print player.Position
+    # for x in range(0,20):
+    #     for y in range(0,20):
+    #         if deserialized_map[y][x].Content == 1:
+    #             print 'O',  # wall
+    #         elif deserialized_map[y][x].Content == 0:
+    #             print '.',  # empty
+    #         elif deserialized_map[y][x].Content == 2:
+    #             print 'H',  # house
+    #         elif deserialized_map[y][x].Content == 3:
+    #             print '^',  # lava
+    #         elif deserialized_map[y][x].Content == 4:
+    #             print '$',  # resource
+    #         elif deserialized_map[y][x].Content == 5:
+    #             print 'S',  # shop
+    #         elif deserialized_map[y][x].Content == 6:
+    #             print '*',  # player
+    #     print '\n'
+
     resPos = findNearestResource(deserialized_map, x, y)
     nextPos = goToPosition(resPos, Point(x,y), deserialized_map)
     if nextPos == -1:
@@ -121,7 +141,7 @@ def goToPosition(dest, current, dmap):
     destPos = -1
 
     validPos = checkEnvironnement(findInMap(current.X,current.Y, dmap), dmap)
-
+    print validPos
     if doubleMove:
         destPos = Point(current.X + prevMove[0],current.Y + prevMove[1])
         invalidPos.append({current.X - prevMove[0],current.Y - prevMove[1]})
@@ -129,19 +149,19 @@ def goToPosition(dest, current, dmap):
     else:
         if len(validPos) <= 1:
             doubleMove = True
-        if dx > 0 and {current.X + 1, current.Y} in validPos:
+        if dx > 0 and (current.X + 1, current.Y) in validPos:
             destPos = Point(current.X + 1, current.Y)
             prevMove = {1,0}
             #check if can move right
-        elif dx < 0 and {current.X - 1, current.Y} in validPos:
+        elif dx < 0 and (current.X - 1, current.Y) in validPos:
             destPos = Point(current.X - 1, current.Y)
             prevMove = {-1,0}
             #check if can move left
-        elif dy > 0 and {current.X, current.Y + 1} in validPos:
+        elif dy > 0 and (current.X, current.Y + 1) in validPos:
             destPos = Point(current.X, current.Y + 1)
             prevMove = {0,1}
             #check if can move up
-        elif dy < 0  and {current.X, current.Y - 1} in validPos:
+        elif dy < 0  and (current.X, current.Y - 1) in validPos:
             destPos = Point(current.X, current.Y - 1)
             prevMove = {0,-1}
             #check if can move down
@@ -167,13 +187,13 @@ def checkEnvironnement(player, dmap):
     goodTile = [TileContent().Empty]
 
     if dmap[player.X-1][player.Y].Content in goodTile and {player.X-1,player.Y} not in invalidPos:
-        possiblePosition.append({dmap[player.X-1][player.Y].X,dmap[player.X-1][player.Y].Y})
+        possiblePosition.append((dmap[player.X - 1][player.Y].X,dmap[player.X - 1][player.Y].Y))
     if dmap[player.X + 1][player.Y].Content in goodTile and {player.X + 1, player.Y} not in invalidPos:
-        possiblePosition.append({dmap[player.X + 1][player.Y].X, dmap[player.X + 1][player.Y].Y})
+        possiblePosition.append((dmap[player.X + 1][player.Y].X,dmap[player.X + 1][player.Y].Y))
     if dmap[player.X][player.Y - 1].Content in goodTile and {player.X, player.Y-1} not in invalidPos:
-        possiblePosition.append({dmap[player.X][player.Y - 1].X, dmap[player.X][player.Y - 1].Y-1})
+        possiblePosition.append((dmap[player.X][player.Y - 1].X,dmap[player.X][player.Y - 1].Y-1))
     if dmap[player.X][player.Y + 1].Content in goodTile and {player.X, player.Y+1} not in invalidPos:
-        possiblePosition.append({dmap[player.X][player.Y + 1].X, dmap[player.X][player.Y + 1].Y+1})
+        possiblePosition.append((dmap[player.X][player.Y + 1].X,dmap[player.X][player.Y + 1].Y+1))
 
     return possiblePosition
 
