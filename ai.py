@@ -5,6 +5,8 @@ import numpy
 
 app = Flask(__name__)
 
+shopPosition = -1
+
 def create_action(action_type, target):
     actionContent = ActionContent(action_type, target.__dict__)
     return json.dumps(actionContent.__dict__)
@@ -102,4 +104,3 @@ def checkMaxCapacity(player):
         return True
     elif player.CarriedRessources <= player.CarryingCapacity:
         return False
-    
