@@ -2,6 +2,6 @@ FROM polyhx/python-seed
 
 ADD . .
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["python", "ai.py"]
