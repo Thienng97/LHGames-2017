@@ -109,7 +109,19 @@ def bot():
     elif p["TotalResources"] >= 15000 and capacitylvl == 0:
         action = create_upgrade_action(UpgradeType().CarryingCapacity)
         capacitylvl += 1
+    elif p["TotalResources"] >= 50000 and capacitylvl == 1:
+        action = create_upgrade_action(UpgradeType().CarryingCapacity)
+        capacitylvl += 1
+    elif p["TotalResources"] >= 100000 and capacitylvl == 2:
+        action = create_upgrade_action(UpgradeType().CarryingCapacity)
+        capacitylvl += 1
     elif p["TotalResources"] >= 15000 and speedlvl == 0:
+        action = create_upgrade_action(UpgradeType().CollectingSpeed)
+        speedlvl += 1
+    elif p["TotalResources"] >= 50000 and speedlvl == 1:
+        action = create_upgrade_action(UpgradeType().CollectingSpeed)
+        speedlvl += 1
+    elif p["TotalResources"] >= 100000 and speedlvl == 2:
         action = create_upgrade_action(UpgradeType().CollectingSpeed)
         speedlvl += 1
     else:
