@@ -171,7 +171,7 @@ def goToPosition(dest, current, dmap):
     else:
         if len(validPos) <= 1:
             doubleMove = True
-        if dx > 0 and (current.X + 1, current.Y) in validPos:
+        if dx > 0 and (current.X + 1, current.Y) in validPos :
             destPos = Point(current.X + 1, current.Y)
             prevMove = {1,0}
             #check if can move right
@@ -186,16 +186,17 @@ def goToPosition(dest, current, dmap):
         elif dy < 0  and (current.X, current.Y - 1) in validPos:
             destPos = Point(current.X, current.Y - 1)
             prevMove = {0,-1}
-            #check if can move down
-        elif (current.X + 1, current.Y) in validPos:
-            destPos = Point(current.X + 1, current.Y)
-            prevMove = {1,0}
-        elif (current.X - 1, current.Y) in validPos:
-            destPos = Point(current.X - 1, current.Y)
-            prevMove = {-1,0}
-        else:
-            destPos = Point(current.X + prevMove[0], current.Y + prevMove[1])
-            invalidPos.append((current.X - prevMove[0], current.Y - prevMove[1]))
+        #     #check if can move down
+        # elif (current.X + 1, current.Y) in validPos:
+        #     destPos = Point(current.X + 1, current.Y)
+        #     prevMove = {1,0}
+        #     doubleMove = True;
+        #     invalidPos.append((current.X - prevMove[0],current.Y - prevMove[1]))
+        # elif (current.X - 1, current.Y) in validPos:
+        #     destPos = Point(current.X - 1, current.Y)
+        #     prevMove = {-1,0}
+        #     doubleMove = True;
+        #     invalidPos.append((current.X - prevMove[0], current.Y - prevMove[1]))
 
     return destPos
 
