@@ -2,7 +2,7 @@
 
 The goal of the LHGames was to develop an AI that would interact in a video game developped by the event organizers. The AI had to collect minerals, steal from other houses, rack up points, buy upgrades and weapons, avoid death and obstacles, be able to fight other AIs.
 
-## Team Je_cherche_un-stage
+## Team Je_cherche_un_stage
 
 This project was made by the following people:
 * Duc-Thien Nguyen
